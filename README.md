@@ -1,6 +1,7 @@
 # Comment lancer le serveur ExpressJs
 
 ```
+npm install
 npm run dev
 ```
 
