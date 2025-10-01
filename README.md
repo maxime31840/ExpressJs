@@ -1,9 +1,7 @@
-# Comment mettre en place un serveur ExpressJS
+# Comment lancer le serveur ExpressJs
 
 ```
-npm init -y
-npm install express
-npm install -D nodemon
+npm run dev
 ```
 
 Le serveur est disponible sur le localhost:3000 car nous écoutons le port 3000.
