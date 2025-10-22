@@ -7,7 +7,7 @@ const occurence = (chaine, car) => {
         }
     }
 
-    return `Le nombre d'occurrence de [${car}] dans la chaîne [${chaine}] est [${compteur}] !`;
+    return `Le nombre d'occurrence de ' ${car} ' dans la chaîne :  ${chaine}, est de '${compteur}' !`;
 }
 
 module.exports = { occurence };

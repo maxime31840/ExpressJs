@@ -11,11 +11,28 @@
         <input type="text" id="chaine1" name="chaine1"><br>
         <label for="caractere">Caractere</label><br>
         <input type="text" id="caractere" name="caractere">
-        <input type="submit" value="Submit">
     </form>
-
+        
+        <button id="submit">Submit</button>
+        <div id="variable"></div>
+        
     <script>
-        document.getElementById("submit").addEventListener('click', chaine1, caractere);
+
+        let traitement = async () => {
+            let chaine1 = document.getElementById('chaine1').value;
+            let caractere = document.getElementById('caractere').value;
+            let res = await fetch('/traitement', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({"chaine1" : chaine1, "caractere" : caractere})
+            });
+            let monResultat = await res.json();
+            document.getElementById('variable').innerHTML = `<p> ${monResultat.resultat}</p>`;
+        }
+        
+        
+
+        document.getElementById("submit").addEventListener('click', traitement);
     </script>
 </body>
 </html>
