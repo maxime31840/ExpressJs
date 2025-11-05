@@ -3,7 +3,18 @@ const { occurence } = require('./occurence.js');
 const express = require('express');
 const app = express();
 const path = require('path');
+const { Sequelize } = require('sequelize');
+// Sequelize Part 
+const sequelize = new Sequelize('sqlite:memory:');
 
+try {
+  await sequelize.authenticate();
+  console.log('Connection has been established successfully.');
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
+
+// Express Part
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -21,7 +32,7 @@ const ticket = {
     requester_id: 1,
     technician_id: 1,
     message: "bienvenue chez los poyos hermanos",
-    technician_id: "Thank you",
+    technician_response : "Thank you",
     priority: "critical",
     status: "assigned"
   }
@@ -45,6 +56,7 @@ app.get('/ticket/:id', (req, res) => {
   });
 })
 
+// Root for all tickets 
 app.get('/tickets', (req, res) =>{
   let tickets = [ticket];
   if(tickets.length === 0) {
@@ -59,6 +71,39 @@ app.get('/tickets', (req, res) =>{
   });
 })
 
+app.post('/create-ticket' , (req, res) => {
+    let ticket = {
+        title : req.body.title,
+        message: req.body.message,
+        priority: req.body.priority,
+        email : req.body.email, 
+        status : req.body.status
+
+    };
+
+    let errors = [];
+
+    for (elem in ticket) {
+      if (elem == null) {
+        errors[elem] = `${elem} not defined`;
+      }
+    }
+
+    if (errors.length != 0 ) {
+      return res.status(400).send({
+        message: "Forms not complete"
+      });
+    }
+
+    // create ticket 
+    // const ticket = await ticket.create
+
+    return res.status(200).send({
+      data: ticket
+    });
+}) 
+
+
 
 
 app.post('/traitement', (req, res) => {
@@ -69,3 +114,4 @@ app.post('/traitement', (req, res) => {
 })
 
 app.listen(3000);
+// sequelize.close()
