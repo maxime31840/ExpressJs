@@ -5,7 +5,7 @@ const app = express();
 const path = require('path');
 const { Sequelize } = require('sequelize');
 // Sequelize Part 
-const sequelize = new Sequelize('sqlite:memory:');
+const sequelize = new Sequelize('sqlite::memory:');
 
 try {
   await sequelize.authenticate();
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-const regexId = /[0-9]+/g;
+
 //test de ticket
 const ticket = {
     id: 1,
@@ -36,6 +36,8 @@ const ticket = {
     priority: "critical",
     status: "assigned"
   }
+
+  const regexId = /[0-9]+/g;
 
 app.get('/ticket/:id', (req, res) => {
   //Récup le ticket avec l'id demandé à la bdd
@@ -102,6 +104,29 @@ app.post('/create-ticket' , (req, res) => {
       data: ticket
     });
 }) 
+
+app.put('/modifier-ticket/:id', async (req, res) => {
+  const id = req.params.id;
+  const updates = req.body;
+
+  if (!regexId.test(id)) {
+    return res.status(400).send({ 
+      message: "Invalid ticket ID" 
+    });
+  }
+
+  // const ticket = await Ticket.findByPk(id);
+  // if (!ticket) return res.status(404).send({ 
+  // message: "Ticket not found" 
+  // });
+
+  // await ticket.update(updates);
+
+  return res.status(200).json({
+    message: `Ticket ${id} updated successfully`,
+    updates
+  });
+});
 
 
 
