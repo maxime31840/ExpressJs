@@ -1,3 +1,4 @@
+const { request } = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
@@ -25,7 +26,11 @@ const Ticket = sequelize.define('Ticket', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  message: {
+   request: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  tech_responses: {
     type: DataTypes.TEXT,
     allowNull: false
   },
