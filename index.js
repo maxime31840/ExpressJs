@@ -1,18 +1,17 @@
-const { timeStamp } = require('console');
-const { occurence } = require('./occurence.js');
 const express = require('express');
 const app = express();
 const path = require('path');
-const { Sequelize } = require('sequelize');
-// Sequelize Part 
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('./src/config/databaseConnect');
+const Ticket = require('./src/models/Ticket');
 
-try {
-  await sequelize.authenticate();
-  console.log('Connection has been established successfully.');
-} catch (error) {
-  console.error('Unable to connect to the database:', error);
-}
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connected to the DataBase !");
+  } catch (err) {
+    console.error("DataBase fail:", err);
+  }
+})();
 
 // Express Part
 app.use(express.json());
@@ -21,57 +20,65 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
+const regexId = /^[0-9]+$/;
 
-//test de ticket
-const ticket = {
-    id: 1,
-    created_at: 1762350400,
-    updated_at: 1762350400,
-    responded_at: 1762350400,
-    closed_at: 1762350400,
-    requester_id: 1,
-    technician_id: 1,
-    message: "bienvenue chez los poyos hermanos",
-    technician_response : "Thank you",
-    priority: "critical",
-    status: "assigned"
-  }
+app.get('/ticket/:id', async (req, res) => {
+  const id = req.params.id;
 
-  const regexId = /[0-9]+/g;
-
-app.get('/ticket/:id', (req, res) => {
-  //Récup le ticket avec l'id demandé à la bdd
-  //renvoyer le ticket
-  let idTicket = req.params.id;
-  if(idTicket.match(regexId) == null) {
-    return res.status(400).send({
-      message: "Type of id should be an int"
+  // Validation stricte de l’ID
+  if (!regexId.test(id)) {
+    return res.status(400).json({
+      message: "Ticket ID must be a valid integer"
     });
   }
-  
-  
-  //const ticket = await Ticket.findByPk(id);
-  //let response = ticket
-  return res.status(200).send({
-    ticket: ticket.id,
-    data: ticket
-  });
-})
+
+  try {
+    // Récupération depuis Sequelize
+    const ticket = await Ticket.findByPk(id);
+
+    if (!ticket) {
+      return res.status(404).json({
+        message: `Ticket ${id} not found`
+      });
+    }
+
+    return res.status(200).json({
+      data: ticket
+    });
+
+  } catch (error) {
+    console.error("Error fetching ticket:", error);
+
+    return res.status(500).json({
+      message: "Internal server error"
+    });
+  }
+});
 
 // Root for all tickets 
-app.get('/tickets', (req, res) =>{
-  let tickets = [ticket];
-  if(tickets.length === 0) {
-    return res.status(200).send({
-      message: "There is no tickets"
+app.get('/tickets', async (req, res) => {
+  try {
+    // Récupération depuis Sequelize
+    const tickets = await Ticket.findAll();
+
+    if (tickets.length === 0) {
+      return res.status(200).json({
+        message: "There are no tickets"
+      });
+    }
+
+    return res.status(200).json({
+      data: tickets
+    });
+
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    return res.status(500).json({
+      message: "Internal server error"
     });
   }
+});
 
-  //const tickets = await tickets.findAll
-  return res.status(200).send({
-    data: tickets
-  });
-})
 
 app.post('/create-ticket' , (req, res) => {
     let ticket = {
@@ -80,7 +87,6 @@ app.post('/create-ticket' , (req, res) => {
         priority: req.body.priority,
         email : req.body.email, 
         status : req.body.status
-
     };
 
     let errors = [];
@@ -100,7 +106,7 @@ app.post('/create-ticket' , (req, res) => {
     // create ticket 
     // const ticket = await ticket.create
 
-    return res.status(200).send({
+    return res.status(201).send({
       data: ticket
     });
 }) 
@@ -127,16 +133,6 @@ app.put('/modifier-ticket/:id', async (req, res) => {
     updates
   });
 });
-
-
-
-
-app.post('/traitement', (req, res) => {
-    let chaine1 =  req.body.chaine1;
-    let caractere = req.body.caractere;
-    let resultat = occurence(chaine1, caractere);
-    res.send({resultat});
-})
 
 app.listen(3000);
 // sequelize.close()

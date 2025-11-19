@@ -1,6 +1,5 @@
-const { request } = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('../config/databaseConnect'); 
 
 const Ticket = sequelize.define('Ticket', {
   id: {
@@ -45,7 +44,7 @@ const Ticket = sequelize.define('Ticket', {
     defaultValue: 'open'
   },
 }, {
-  tableName: 'tickets', 
+  tableName: 'ticket', 
   timestamps: false
 });
 
