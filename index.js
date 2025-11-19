@@ -134,5 +134,39 @@ app.put('/modifier-ticket/:id', async (req, res) => {
   });
 });
 
+app.delete('/delete-ticket/:id', async (req, res) => {
+  const id = req.params.id;
+
+  // Vérification ID
+  if (!regexId.test(id)) {
+    return res.status(400).json({
+      message: "Ticket ID should be an integer"
+    });
+  }
+
+  try {
+    const ticket = await Ticket.findByPk(id);
+
+    if (!ticket) {
+      return res.status(404).json({
+        message: `Ticket with ID ${id} not found`
+      });
+    }
+
+    await ticket.destroy();
+
+    return res.status(200).json({
+      message: `Ticket ${id} has been deleted successfully`
+    });
+
+  } catch (error) {
+    console.error("Error deleting ticket:", error);
+    return res.status(500).json({
+      message: "Internal server error during ticket deletion"
+    });
+  }
+});
+
+
 app.listen(3000);
 // sequelize.close()
