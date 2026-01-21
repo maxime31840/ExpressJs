@@ -113,26 +113,31 @@ app.post('/create-ticket' , async (req, res) => {
 }) 
 
 app.put('/modifier-ticket/:id', async (req, res) => {
-  const id = req.params.id;
-  const updates = req.body;
+  try {
+    const id = req.params.id;
+    const updates = req.body;
 
-  if (!regexId.test(id)) {
-    return res.status(400).send({ 
-      message: "Invalid ticket ID" 
+    if (!regexId.test(id)) {
+      return res.status(400).send({ 
+        message: "Invalid ticket ID" 
+      });
+    }
+
+    const ticket = await Ticket.findByPk(id);
+    if (!ticket) return res.status(404).send({ 
+    message: "Ticket not found" 
     });
+    
+    await ticket.update(updates);
+
+    return res.status(200).json({
+      message: `Ticket ${id} updated successfully`,
+      updates
+    });
+  }catch(err){
+    console.log(err);
   }
-
-  // const ticket = await Ticket.findByPk(id);
-  // if (!ticket) return res.status(404).send({ 
-  // message: "Ticket not found" 
-  // });
-
-  // await ticket.update(updates);
-
-  return res.status(200).json({
-    message: `Ticket ${id} updated successfully`,
-    updates
-  });
+  
 });
 
 app.delete('/delete-ticket/:id', async (req, res) => {
