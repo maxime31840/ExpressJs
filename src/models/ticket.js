@@ -8,6 +8,10 @@ const Ticket = sequelize.define('Ticket', {
     autoIncrement: true,
     primaryKey: true
   },
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
   created_at: {
     type: DataTypes.DATE, 
     allowNull: false,
@@ -25,13 +29,13 @@ const Ticket = sequelize.define('Ticket', {
     type: DataTypes.DATE,
     allowNull: true
   },
-   request: {
+   message: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   tech_responses: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   priority: {
     type: DataTypes.ENUM('low', 'medium', 'high', 'critical'), 

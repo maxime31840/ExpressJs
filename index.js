@@ -80,8 +80,8 @@ app.get('/tickets', async (req, res) => {
 });
 
 
-app.post('/create-ticket' , (req, res) => {
-    let ticket = {
+app.post('/create-ticket' , async (req, res) => {
+    let createdTicket = {
         title : req.body.title,
         message: req.body.message,
         priority: req.body.priority,
@@ -91,8 +91,8 @@ app.post('/create-ticket' , (req, res) => {
 
     let errors = [];
 
-    for (elem in ticket) {
-      if (elem == null) {
+    for (elem in createdTicket) {
+      if (createdTicket[elem] == null) {
         errors[elem] = `${elem} not defined`;
       }
     }
@@ -103,8 +103,9 @@ app.post('/create-ticket' , (req, res) => {
       });
     }
 
+    const ticket = await Ticket.create(createdTicket);
     // create ticket 
-    // const ticket = await ticket.create
+    // const ticket = await Ticket.create(ticket);
 
     return res.status(201).send({
       data: ticket
