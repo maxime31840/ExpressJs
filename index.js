@@ -20,7 +20,13 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
+
+// Regex for ID validation
 const regexId = /^[0-9]+$/;
+
+
+
+// Root for a single ticket
 
 app.get('/ticket/:id', async (req, res) => {
   const id = req.params.id;
@@ -55,6 +61,8 @@ app.get('/ticket/:id', async (req, res) => {
   }
 });
 
+
+
 // Root for all tickets 
 app.get('/tickets', async (req, res) => {
   try {
@@ -80,6 +88,8 @@ app.get('/tickets', async (req, res) => {
 });
 
 
+
+// Root to create a ticket
 app.post('/create-ticket' , async (req, res) => {
     let createdTicket = {
         title : req.body.title,
@@ -104,14 +114,16 @@ app.post('/create-ticket' , async (req, res) => {
     }
 
     const ticket = await Ticket.create(createdTicket);
-    // create ticket 
-    // const ticket = await Ticket.create(ticket);
 
     return res.status(201).send({
       data: ticket
     });
 }) 
 
+
+
+
+// Root to update a ticket
 app.put('/modifier-ticket/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -140,6 +152,9 @@ app.put('/modifier-ticket/:id', async (req, res) => {
   
 });
 
+
+
+// Root to delete a ticket
 app.delete('/delete-ticket/:id', async (req, res) => {
   const id = req.params.id;
 
