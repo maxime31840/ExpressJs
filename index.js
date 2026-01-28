@@ -115,7 +115,7 @@ app.post('/create-ticket' , async (req, res) => {
 app.put('/modifier-ticket/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const updates = req.body;
+    const updatedFields = req.body;
 
     if (!regexId.test(id)) {
       return res.status(400).send({ 
@@ -127,12 +127,12 @@ app.put('/modifier-ticket/:id', async (req, res) => {
     if (!ticket) return res.status(404).send({ 
     message: "Ticket not found" 
     });
-    
-    await ticket.update(updates);
+
+    await ticket.update(updatedFields);
 
     return res.status(200).json({
       message: `Ticket ${id} updated successfully`,
-      updates
+      updatedFields
     });
   }catch(err){
     console.log(err);
